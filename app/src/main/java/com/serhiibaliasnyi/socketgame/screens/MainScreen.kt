@@ -72,18 +72,21 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         mutableStateOf("")
     }
     if(message.message=="Request" && message.extra.isNotEmpty() ) canAcceptRequest=true
-    if(message.message=="AcceptingTheRequest" && message.extra.isNotEmpty() && !disconnectComand){
+
+    Log.d("SocketManager", "message="+message.message+" extra="+message.extra+" canAcceptRequest="+canAcceptRequest)
+
+    if(message.message=="AcceptingTheRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
         requestAccepted=true
         socketid=message.extra
         gameState=1
         Log.d("SocketManager", "State="+gameState)
     }
-    if(message.message=="Disconnect" && message.extra.isNotEmpty() || disconnectComand){
+    if(message.message=="Disconnect" && message.extra.isNotEmpty() ){
         requestAccepted=false
         canAcceptRequest=false
         socketid=""
         gameState=0
-
+        Log.d("SocketManager", "Disconnect message.message="+message.message+" disconnectComand="+disconnectComand)
     }
     // Listen to the socket event
  /*   DisposableEffect(Unit) {
@@ -196,6 +199,7 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
                         disconnectComand=true
                         //message.message=""
                         socketViewModel.sendMessage("Disconnect", socketid)
+                        socketViewModel.clearMessage()
                         Log.d("SocketManager", "Disconnect")
                         Log.d("SocketManager", "gameState="+gameState)
                     },

@@ -71,4 +71,8 @@ class SocketViewModel : ViewModel() {
         SocketManager.off("answer", answerListener)
         SocketManager.disconnect()
     }
+
+    fun clearMessage() {
+        _message.value = ParsedMessage("", "")
+    }
 }
