@@ -52,6 +52,12 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         mutableStateOf(false)
     }
 
+    var requestDeny  by remember {
+        mutableStateOf(false)
+    }
+    var sendRequest  by remember {
+        mutableStateOf(false)
+    }
     var disconnectComand  by remember {
         mutableStateOf(false)
     }
@@ -81,7 +87,16 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         gameState=1
         Log.d("SocketManager", "State="+gameState)
     }
+    if(message.message=="DenyRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
+        sendRequest=false
+        requestAccepted=false
+        canAcceptRequest=false
+        socketid=message.extra
+        gameState=0
+        Log.d("SocketManager", "DenyRequest="+gameState)
+    }
     if(message.message=="Disconnect" && message.extra.isNotEmpty() ){
+        sendRequest=false
         requestAccepted=false
         canAcceptRequest=false
         socketid=""
@@ -220,56 +235,93 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
 
 
         } else {
-            Button(
-                onClick = {
-                    /*  val jsonObject = JSONObject()
+            if (!canAcceptRequest) {
+                Button(enabled =!sendRequest,
+                      onClick = {
+                        /*  val jsonObject = JSONObject()
                   jsonObject.put("message", "Hello, Server!")
                   SocketHandler.emit("message", jsonObject)  */
-                    disconnectComand=false
-                    socketViewModel.sendMessage("Request", "")
-                    Log.d("SocketManager", "Request to play")
-                },
-                shape = RoundedCornerShape(10.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                )
-            ) {
-                Text(
-                    text = "Request to play",
-                    fontSize = 24.sp,
-                    fontStyle = FontStyle.Normal,
-                    color = Red
+                        disconnectComand = false
+                        sendRequest=true
+                        socketViewModel.sendMessage("Request", "")
+                          socketViewModel.clearMessage()
+                        Log.d("SocketManager", "Request to play")
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                    )
+                ) {
+                    Text(
+                        text = "Request to play",
+                        fontSize = 24.sp,
+                        fontStyle = FontStyle.Normal,
+                        color = White
 
-                )
-            }
+                    )
+                }
 
 
-
-            Button(
-                enabled = canAcceptRequest,
-                onClick = {
-                    /*  val jsonObject = JSONObject()
+            }else {
+                Row() {
+                    Button(
+                        enabled = canAcceptRequest,
+                        onClick = {
+                            /*  val jsonObject = JSONObject()
                   jsonObject.put("message", "Hello, Server!")
                   SocketHandler.emit("message", jsonObject)  */
-                    requestAccepted=true
-                    socketid=message.extra
-                    gameState=2
-                    disconnectComand=false
-                    socketViewModel.sendMessage("AcceptingTheRequest", message.extra)
-                    Log.d("SocketManager", "Accepting the request")
-                },
-                shape = RoundedCornerShape(10.dp),
-                elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                )
-            ) {
-                Text(
-                    text = "Accepting the request",
-                    fontSize = 24.sp,
-                    fontStyle = FontStyle.Normal,
-                    color = Green
+                            requestAccepted = true
+                            socketid = message.extra
+                            gameState = 2
+                            disconnectComand = false
+                            socketViewModel.sendMessage("AcceptingTheRequest", message.extra)
+                            socketViewModel.clearMessage()
+                            Log.d("SocketManager", "Accepting the request")
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        )
+                    ) {
+                        Text(
+                            text = "Ok request",
+                            fontSize = 20.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Green
 
-                )
+                        )
+                    }
+
+                    Button(
+                        enabled = canAcceptRequest,
+                        onClick = {
+                            /*  val jsonObject = JSONObject()
+                  jsonObject.put("message", "Hello, Server!")
+                  SocketHandler.emit("message", jsonObject)  */
+                            requestAccepted = false
+                            canAcceptRequest = false
+
+                            socketid = message.extra
+                            gameState = 0
+                            // disconnectComand = false
+                            socketViewModel.sendMessage("DenyRequest", message.extra)
+                            socketViewModel.clearMessage()
+                            Log.d("SocketManager", "Deny request")
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        )
+                    ) {
+                        Text(
+                            text = "Deny request",
+                            fontSize = 20.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Red
+
+                        )
+                    }
+                }
             }
         }
     }
