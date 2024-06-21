@@ -1,22 +1,27 @@
 package com.serhiibaliasnyi.socketgame.screens
 
 import android.util.Log
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +43,33 @@ import androidx.compose.ui.unit.sp
 //import com.serhiibaliasnyi.socketgame.SocketHandler
 import com.serhiibaliasnyi.socketgame.SocketViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.serhiibaliasnyi.socketgame.SocketManager
 import com.serhiibaliasnyi.socketgame.ui.theme.PurpleGrey40
 import com.serhiibaliasnyi.socketgame.ui.theme.PurpleGrey80
 import io.socket.emitter.Emitter
 import org.json.JSONObject
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.draw.blur
 
 @Composable
 fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
+
+    val isConnected by socketViewModel.isConnected.collectAsState()
+    val connectionError by socketViewModel.connectionError.collectAsState()
+    val response by socketViewModel.response.collectAsState()
+    val parsedMessage by socketViewModel.message.collectAsState()
     val message by socketViewModel.message.collectAsState()
-    //val parsedMessage by socketViewModel.parsedMessage.collectAsState()
-   // val request by socketViewModel.request.collectAsState()
+  //  var message by viewModel.message.collectAsState()
+   // var message by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = Unit) {
+        socketViewModel.connect()
+    }
+
+    //val message by socketViewModel.message.collectAsState()
+   // val connectionError by SocketManager.connectionError.collectAsState()
+
+
     var requestAccepted  by remember {
         mutableStateOf(false)
     }
@@ -121,9 +143,19 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Text(
-            text="Status game: $gameState",
-            fontSize = 24.sp)
+        Row() {
+            var color:Color = if(isConnected) Color.Green else Color.Red
+            Canvas(modifier = Modifier
+                .size(10.dp)
+                //  .blur(radiusX=40.dp, radiusY=40.dp)
+                , onDraw = {
+                    drawCircle(color = color)
+                })
+            Text(
+                text = "Status game: $gameState",
+                fontSize = 24.sp
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -168,8 +200,40 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
             ) {
-                Text(text = "Message: ${message.message}")
-                Text(text = "Extra: ${message.extra}")
+             //   Text(text = "Message: ${message.message}")
+              //  Text(text = "Extra: ${message.extra}")
+                when {
+                    connectionError != null -> {
+                        Text("Server connection error: $connectionError")
+                    }
+                    !isConnected -> {
+                        Text("Server is not active. Please try again later.")
+                    }
+                    else -> {
+
+                        Text(text = "Message: ${message.message}")
+                        Text(text = "Extra: ${message.extra}")
+                        /*Text("Connected to server")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        TextField(
+                            value = message,
+                            onValueChange = { message = it },
+                            label = { Text("Enter message") }
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            viewModel.sendMessage("message_event", message)
+                            message = ""
+                        }) {
+                            Text("Send Message")
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Response: ${response ?: "No response yet"}")
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Parsed Message: ${parsedMessage.message}")
+                        Text("Username: ${parsedMessage.extra}") */
+                    }
+                }
             }
         }
         Button(
@@ -235,7 +299,7 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
 
 
         } else {
-            if (!canAcceptRequest) {
+            if (isConnected && !canAcceptRequest) {
                 Button(enabled =!sendRequest,
                       onClick = {
                         /*  val jsonObject = JSONObject()
@@ -262,7 +326,7 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
                 }
 
 
-            }else {
+            }else if(isConnected && canAcceptRequest){
                 Row() {
                     Button(
                         enabled = canAcceptRequest,

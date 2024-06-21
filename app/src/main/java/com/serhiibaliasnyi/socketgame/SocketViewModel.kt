@@ -10,6 +10,97 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class SocketViewModel : ViewModel() {
+
+    private val _isConnected = MutableStateFlow(false)
+    val isConnected: StateFlow<Boolean> get() = _isConnected
+
+    private val _connectionError = MutableStateFlow<String?>(null)
+    val connectionError: StateFlow<String?> get() = _connectionError
+
+    private val _response = MutableStateFlow<String?>(null)
+    val response: StateFlow<String?> get() = _response
+
+    private val _message = MutableStateFlow(ParsedMessage("No message", ""))
+    val message: StateFlow<ParsedMessage> get() = _message
+
+
+    private val responseListener = Emitter.Listener { args ->
+        if (args.isNotEmpty()) {
+            val responseMessage = args[0] as? JSONObject
+            responseMessage?.let {
+                val messageText = it.getString("message")
+                val extra = it.getString("extra")
+                _message.value = ParsedMessage(messageText, extra)
+                _response.value = messageText // Optional, if you want to keep _response as well
+            }
+        }
+    }
+    private val messageListener = Emitter.Listener { args ->
+        val data = args[0] as JSONObject
+        viewModelScope.launch {
+
+            val receivedMessage = data.getString("message")
+            val receivedExtra = data.getString("extra")
+            // _message.value = data.getString("message")
+            // _message.value = "Message: $receivedMessage, Extra: $receivedExtra"
+            _message.value = ParsedMessage(receivedMessage, receivedExtra)
+        }
+    }
+
+    init {
+        observeSocketEvents()
+        connect()
+    }
+
+    private fun observeSocketEvents() {
+        viewModelScope.launch {
+            SocketManager.isConnected.collect {
+                _isConnected.value = it
+            }
+        }
+
+        viewModelScope.launch {
+            SocketManager.connectionError.collect {
+                _connectionError.value = it
+            }
+        }
+
+        // Set a message listener for receiving messages from the server
+        SocketManager.setMessageListener("response_event", responseListener)
+        SocketManager.setMessageListener("message", messageListener)
+    }
+
+    fun connect() {
+        SocketManager.connect()
+    }
+
+    fun disconnect() {
+        SocketManager.disconnect()
+        SocketManager.removeMessageListener("response_event", responseListener)
+    }
+
+    //fun sendMessage(event: String, message: Any) {
+    fun sendMessage(message: String, extra: String) {
+        if (_isConnected.value) {
+            val jsonObject = JSONObject().apply {
+                put("message", message)
+                put("extra", extra)
+            }
+            SocketManager.sendMessage("message", jsonObject)
+          //  SocketManager.sendMessage(event, message)
+        } else {
+            _connectionError.value = "Cannot send message. Not connected to server."
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disconnect()
+    }
+    fun clearMessage() {
+        _message.value = ParsedMessage("", "")
+    }
+    /*
     private val _message = MutableStateFlow(ParsedMessage("No message", ""))
         // MutableStateFlow(ParsedMessage("No message", ""))
         val message: StateFlow<ParsedMessage> get() = _message
@@ -75,4 +166,6 @@ class SocketViewModel : ViewModel() {
     fun clearMessage() {
         _message.value = ParsedMessage("", "")
     }
+
+     */
 }

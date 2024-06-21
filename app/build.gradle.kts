@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation ("io.socket:socket.io-client:2.0.1")
+    //implementation 'io.socket:socket.io-client:2.0.0'
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
     //implementation("io.socket:socket.io-client:4.7.5") {
     //    exclude (group= "org.json", module= "json")
