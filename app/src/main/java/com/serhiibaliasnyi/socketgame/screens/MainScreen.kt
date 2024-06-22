@@ -1,6 +1,12 @@
 package com.serhiibaliasnyi.socketgame.screens
 
 import android.util.Log
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -53,6 +59,25 @@ import androidx.compose.ui.draw.blur
 
 @Composable
 fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val lightFlashing by infiniteTransition.animateFloat(
+        initialValue = 0.0f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 3000 //6000
+                0.0f at 0 with LinearOutSlowInEasing
+                1.0f at 500 with LinearOutSlowInEasing
+                0.0f at 1000 with LinearOutSlowInEasing
+                1.0f at 1500 with LinearOutSlowInEasing
+                0.0f at 2000 with LinearOutSlowInEasing
+                1.0f at 2500 with LinearOutSlowInEasing
+                0.0f at 3000 with LinearOutSlowInEasing
+                0.0f at 6000 with LinearOutSlowInEasing
+            },
+            repeatMode = RepeatMode.Restart,
+        )
+    )
 
     val isConnected by socketViewModel.isConnected.collectAsState()
     val connectionError by socketViewModel.connectionError.collectAsState()
@@ -144,6 +169,7 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Row() {
+
             var color:Color = if(isConnected) Color.Green else Color.Red
             Canvas(modifier = Modifier
                 .size(10.dp)
@@ -155,6 +181,12 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
                 text = "Status game: $gameState",
                 fontSize = 24.sp
             )
+            Canvas(modifier = Modifier
+                .size(10.dp),
+
+                onDraw = {
+                    drawCircle(color = color.copy(alpha = lightFlashing))
+                })
         }
         Box(
             modifier = Modifier
@@ -390,6 +422,7 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
         }
     }
 }
+
 
 @Preview
 @Composable
