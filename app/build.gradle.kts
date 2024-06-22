@@ -62,6 +62,8 @@ dependencies {
     implementation ("io.socket:socket.io-client:2.0.1")
     //implementation 'io.socket:socket.io-client:2.0.0'
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
+    implementation(libs.androidx.media3.exoplayer)
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     //implementation("io.socket:socket.io-client:4.7.5") {
     //    exclude (group= "org.json", module= "json")
     //}

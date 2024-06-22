@@ -1,5 +1,6 @@
 package com.serhiibaliasnyi.socketgame.screens
 
+import android.media.SoundPool
 import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -56,9 +57,11 @@ import io.socket.emitter.Emitter
 import org.json.JSONObject
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.draw.blur
+import androidx.media3.exoplayer.ExoPlayer
+import com.serhiibaliasnyi.socketgame.MainActivity
 
 @Composable
-fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
+fun MainScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>, socketViewModel: SocketViewModel = viewModel()) {
     val infiniteTransition = rememberInfiniteTransition()
     val lightFlashing by infiniteTransition.animateFloat(
         initialValue = 0.0f,
@@ -427,5 +430,5 @@ fun MainScreen(socketViewModel: SocketViewModel = viewModel()) {
 @Preview
 @Composable
 fun MainV(showBackground: Boolean = true){
-    MainScreen()
+    //MainScreen()
 }
