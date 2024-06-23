@@ -9,6 +9,7 @@ import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.serhiibaliasnyi.socketgame.rule_screen.RuleScreen
 import com.serhiibaliasnyi.socketgame.screens.MainScreen
+import com.serhiibaliasnyi.socketgame.ui.theme.GreenMain
 import com.serhiibaliasnyi.socketgame.ui.theme.SocketgameTheme
 import io.socket.emitter.Emitter
 import org.json.JSONObject
@@ -26,7 +28,7 @@ class MainActivity : ComponentActivity() {
     var soundPool: SoundPool? = null
     @OptIn(UnstableApi::class) override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+      //  enableEdgeToEdge()
         player = ExoPlayer.Builder(this).setPauseAtEndOfMediaItems(true).build()
         val playList = getPlayList()
         val spb = SoundPool.Builder()
@@ -40,11 +42,14 @@ class MainActivity : ComponentActivity() {
         //SocketHandler.connect()
 
         setContent {
-          //  SocketgameTheme {
-
+            SocketgameTheme {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = GreenMain
+            ) {
                 RuleScreen(soundPool, player, playList)
-
-         //   }
+            }
+        }
         }
       //  SocketHandler.on("message", onNewMessage)
     }
