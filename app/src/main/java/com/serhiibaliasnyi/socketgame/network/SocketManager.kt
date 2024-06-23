@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame
+package com.serhiibaliasnyi.socketgame.network
 
 import android.util.Log
 import io.socket.client.IO

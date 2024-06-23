@@ -1,1 +1,4 @@
 /build
+/release
+/src/main/res/raw
+google-services.json

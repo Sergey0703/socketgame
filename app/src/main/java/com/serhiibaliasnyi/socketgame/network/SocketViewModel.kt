@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame
+package com.serhiibaliasnyi.socketgame.network
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

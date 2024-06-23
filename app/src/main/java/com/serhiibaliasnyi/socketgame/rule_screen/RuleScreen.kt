@@ -17,7 +17,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,20 +24,16 @@ import androidx.compose.foundation.layout.Box
 //import androidx.compose.foundation.layout.BoxScopeInstance.matchParentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 //import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 //import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,7 +42,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,15 +56,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.FocusRequester.Companion.createRefs
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.Blue
-import androidx.compose.ui.graphics.Color.Companion.Green
-import androidx.compose.ui.graphics.Color.Companion.Magenta
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -83,6 +71,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 //import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -93,10 +82,11 @@ import androidx.media3.exoplayer.ExoPlayer
 //import com.airbnb.lottie.compose.LottieClipSpec
 import com.serhiibaliasnyi.socketgame.MainActivity
 import com.serhiibaliasnyi.socketgame.R
+import com.serhiibaliasnyi.socketgame.network.SocketViewModel
+import com.serhiibaliasnyi.socketgame.network.ConnectionStatus
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBackground
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBg
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenMain
-import com.serhiibaliasnyi.socketgame.ui.theme.MainActionColor
 import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -109,7 +99,20 @@ import kotlin.time.Duration.Companion.seconds
     ExperimentalComposeUiApi::class
 )
 @Composable
-fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>) {
+fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>,socketViewModel: SocketViewModel = viewModel()) {
+   // val isConnected by socketViewModel.isConnected.collectAsState()
+   // val connectionError by socketViewModel.connectionError.collectAsState()
+   // val response by socketViewModel.response.collectAsState()
+   // val parsedMessage by socketViewModel.message.collectAsState()
+   // val message by socketViewModel.message.collectAsState()
+    //  var message by viewModel.message.collectAsState()
+    // var message by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = Unit) {
+        socketViewModel.connect()
+    }
+
+
     val quantityOfSectors:Int=40
 
     var quantityOfButtons = remember {
@@ -433,7 +436,10 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 // .background(Blue)
                 .weight(0.1f)
                 //.fillMaxHeight(0.1f)
-                .fillMaxWidth()) {
+                .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start) {
+                val connectionState = ConnectionStatus(viewModel = socketViewModel)
             Text( modifier=Modifier
                 //.background(Yellow)
                 .weight(0.25f),
@@ -445,13 +451,14 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 fontWeight = FontWeight.Bold,
                 color = White,
             )
-              Row(modifier=Modifier
+
+            /*  Row(modifier=Modifier
                  // .background(White)
                   .weight(0.5f),
                   //.fillMaxWidth(0.68f),
                  horizontalArrangement = Arrangement.Center
-                  ){
-                  if(totalWinCount.value>0) {
+                  ) { */
+                  if (totalWinCount.value > 0) {
                       val formattedNumber = String.format("%02d", totalWinCount.value)
                       Text(
                           text = formattedNumber,
@@ -462,6 +469,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                           //  style = MaterialTheme.typography.bodyLarge
                       )
                   }
+             // }
                   /* for (x in 1..totalWinCount.value) {
                       Image(
                           painter = painterResource(id = R.drawable.crown),
@@ -475,7 +483,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                               .alpha(1f)
                       )
                   } */
-              }
+
                Row(modifier=Modifier
                  //  .background(Red)
                    .weight(0.25f),){
