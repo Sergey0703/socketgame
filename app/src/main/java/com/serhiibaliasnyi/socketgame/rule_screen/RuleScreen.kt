@@ -17,6 +17,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +58,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.ColorFilter
@@ -84,6 +86,7 @@ import com.serhiibaliasnyi.socketgame.MainActivity
 import com.serhiibaliasnyi.socketgame.R
 import com.serhiibaliasnyi.socketgame.network.SocketViewModel
 import com.serhiibaliasnyi.socketgame.network.ConnectionStatus
+import com.serhiibaliasnyi.socketgame.network.Dashboard
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBackground
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBg
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenMain
@@ -433,13 +436,15 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         ) {
             //top Row
             Row(modifier = Modifier
-                // .background(Blue)
+               //  .background(Blue)
+                .padding(0.dp)
                 .weight(0.1f)
                 //.fillMaxHeight(0.1f)
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
-                val connectionState = ConnectionStatus(viewModel = socketViewModel)
+                 Dashboard(viewModel = socketViewModel)
+         /*       val connectionState = ConnectionStatus(viewModel = socketViewModel)
             Text( modifier=Modifier
                 //.background(Yellow)
                 .weight(0.25f),
@@ -488,7 +493,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                  //  .background(Red)
                    .weight(0.25f),){
                    Text(text="")
-               }
+               } */
 
             }
             //Second Row
