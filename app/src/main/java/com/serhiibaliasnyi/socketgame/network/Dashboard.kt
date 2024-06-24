@@ -1,5 +1,6 @@
 package com.serhiibaliasnyi.socketgame.network
 
+import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -15,13 +16,20 @@ import androidx.compose.foundation.layout.padding
 //import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,10 +37,67 @@ import com.serhiibaliasnyi.socketgame.ui.theme.Red
 import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
 
 @Composable
-fun Dashboard(viewModel: SocketViewModel) {
-   // val connectionState = ConnectionStatus(viewModel = socketViewModel)
-    val isConnected by viewModel.isConnected.collectAsState()
-    val connectionError by viewModel.connectionError.collectAsState()
+fun Dashboard(socketViewModel: SocketViewModel) {
+
+    val isConnected by socketViewModel.isConnected.collectAsState()
+    val connectionError by socketViewModel.connectionError.collectAsState()
+    val response by socketViewModel.response.collectAsState()
+    val parsedMessage by socketViewModel.message.collectAsState()
+    val message by socketViewModel.message.collectAsState()
+
+    var requestAccepted  by remember {
+        mutableStateOf(false)
+    }
+
+    var requestDeny  by remember {
+        mutableStateOf(false)
+    }
+    var sentRequest  by remember {
+        mutableStateOf(false)
+    }
+
+    var buttonSendRequest  by remember {
+        mutableStateOf(false)
+    }
+
+    var buttonCancelRequest by remember {
+        mutableStateOf(false)
+    }
+    var buttonAcceptRequest by remember {
+        mutableStateOf(false)
+    }
+    var disconnectComand  by remember {
+        mutableStateOf(false)
+    }
+    var canAcceptRequest by remember {
+        mutableStateOf(false)
+    }
+
+    var socketid by remember {
+        mutableStateOf("")
+    }
+    var gameState by remember {
+        mutableStateOf(0)
+    }
+    val localAnswer by remember {
+        mutableStateOf(0)
+    }
+    var text by remember {
+        mutableStateOf("")
+    }
+    if(message.message=="Request" && message.extra.isNotEmpty() ) canAcceptRequest=true
+
+
+        if(isConnected && !sentRequest){
+              buttonSendRequest=true
+        }
+        if(isConnected && sentRequest){
+            buttonCancelRequest=true
+        }
+       if(isConnected && canAcceptRequest){
+        buttonAcceptRequest=true
+        }
+
     val infiniteTransition = rememberInfiniteTransition()
     val lightFlashing by infiniteTransition.animateFloat(
         initialValue = 0.0f,
@@ -100,6 +165,58 @@ fun Dashboard(viewModel: SocketViewModel) {
             }
             else -> {
                 //   Text("Connected to server")
+               // when {
+                    //isConnected && !canAcceptRequest ->{
+                   if(buttonSendRequest ){
+                        Button(modifier = Modifier.padding(0.dp),
+                            enabled = !sentRequest,
+                            onClick = {
+                                // disconnectComand = false
+                                sentRequest = true
+                                socketViewModel.sendMessage("Request", "")
+                                socketViewModel.clearMessage()
+                                Log.d("SocketManager", "Request to play")
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                            colors = ButtonDefaults.buttonColors(
+                            )
+                        ) {
+                            Text(
+                                text = "Request to play",
+                                fontSize = 16.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = White
+
+                            )
+                        }
+                    }
+                    if(buttonCancelRequest){
+                        Button(modifier = Modifier.padding(0.dp),
+                            enabled = sentRequest,
+                            onClick = {
+                                // disconnectComand = false
+                               // sentRequest = true
+                                socketViewModel.sendMessage("CancelRequest", "")
+                                socketViewModel.clearMessage()
+                                Log.d("SocketManager", "Cancel Request")
+                            },
+                            shape = RoundedCornerShape(10.dp),
+                            elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                            colors = ButtonDefaults.buttonColors(
+                            )
+                        ) {
+                            Text(
+                                text = "Cancel Request",
+                                fontSize = 16.sp,
+                                fontStyle = FontStyle.Normal,
+                                color = Red
+
+                            )
+                        }
+                    }
+
+              //  }//when
 
             }
         }
