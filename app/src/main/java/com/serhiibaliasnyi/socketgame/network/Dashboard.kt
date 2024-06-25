@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Green
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -49,6 +50,10 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         mutableStateOf(false)
     }
 
+    var acceptingTheRequest by remember {
+        mutableStateOf(false)
+    }
+
     var requestDeny  by remember {
         mutableStateOf(false)
     }
@@ -66,6 +71,13 @@ fun Dashboard(socketViewModel: SocketViewModel) {
     var buttonAcceptRequest by remember {
         mutableStateOf(false)
     }
+    var buttonCancelAcceptRequest by remember {
+        mutableStateOf(false)
+    }
+    var buttonDisconnect by remember {
+        mutableStateOf(false)
+    }
+
     var disconnectComand  by remember {
         mutableStateOf(false)
     }
@@ -79,24 +91,60 @@ fun Dashboard(socketViewModel: SocketViewModel) {
     var gameState by remember {
         mutableStateOf(0)
     }
-    val localAnswer by remember {
-        mutableStateOf(0)
-    }
-    var text by remember {
-        mutableStateOf("")
-    }
+
     if(message.message=="Request" && message.extra.isNotEmpty() ) canAcceptRequest=true
+    if(requestAccepted) canAcceptRequest=false
+    if(message.message=="AcceptingTheRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
+        acceptingTheRequest=true
+        socketid=message.extra
+        //    gameState=1
+        Log.d("SocketManager", "AcceptingTheRequest")
+    }
+    if(message.message=="DenyRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
+        // sendRequest=false
+        requestAccepted=false
+        canAcceptRequest=false
+        socketid=message.extra
+        //  gameState=0
+        Log.d("SocketManager", "DenyRequest="+gameState)
+    }
 
 
-        if(isConnected && !sentRequest){
+       if(isConnected && !sentRequest && !requestAccepted){
               buttonSendRequest=true
         }
         if(isConnected && sentRequest){
             buttonCancelRequest=true
         }
        if(isConnected && canAcceptRequest){
+        buttonSendRequest=false
+        buttonCancelRequest=false
         buttonAcceptRequest=true
+        buttonCancelAcceptRequest=true
+
         }
+
+       if((isConnected && requestAccepted)||(isConnected && acceptingTheRequest)){
+        buttonSendRequest=false
+        buttonCancelRequest=false
+        buttonAcceptRequest=false
+        buttonCancelAcceptRequest=false
+        buttonDisconnect=true
+       }
+    if((message.message=="Disconnect" && message.extra.isNotEmpty()) || disconnectComand ){
+        disconnectComand=false
+        requestAccepted=false
+        canAcceptRequest=false
+        sentRequest=false
+        socketid=""
+        buttonSendRequest=true
+        buttonCancelRequest=false
+        buttonAcceptRequest=false
+        buttonCancelAcceptRequest=false
+        buttonDisconnect=false
+        //gameState=0
+        Log.d("SocketManager", "Disconnect message.message="+message.message+" disconnectComand="+disconnectComand)
+    }
 
     val infiniteTransition = rememberInfiniteTransition()
     val lightFlashing by infiniteTransition.animateFloat(
@@ -215,7 +263,79 @@ fun Dashboard(socketViewModel: SocketViewModel) {
                             )
                         }
                     }
+                //Accept Request
+                if(buttonAcceptRequest){
+                    Button(modifier = Modifier.padding(0.dp),
+                       // enabled = !sentRequest,
+                        onClick = {
+                            requestAccepted = true
+                            socketid = message.extra
+                          //  gameState = 2
+                            socketViewModel.sendMessage("AcceptingTheRequest", message.extra)
+                            socketViewModel.clearMessage()
+                            Log.d("SocketManager", "Accept Request")
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        )
+                    ) {
+                        Text(
+                            text = "Accept Request",
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Green
+                        )
+                    }
+                }
+                if(buttonCancelAcceptRequest){
+                    Button(modifier = Modifier.padding(0.dp),
+                        // enabled = !sentRequest,
+                        onClick = {
+                            // disconnectComand = false
+                            //sentRequest = true
+                            socketViewModel.sendMessage("DenyRequest", "")
+                            socketViewModel.clearMessage()
+                            Log.d("SocketManager", "Deny Accept Request")
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        )
+                    ) {
+                        Text(
+                            text = "Deny Request",
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Red
+                        )
+                    }
+                }
+                //Disconnect
+                if(buttonDisconnect){
+                    Button(
+                        onClick = {
+                            disconnectComand=true
+                            //message.message=""
+                            socketViewModel.sendMessage("Disconnect", socketid)
+                            socketViewModel.clearMessage()
+                            Log.d("SocketManager", "Disconnect")
+                            Log.d("SocketManager", "gameState="+gameState)
+                        },
+                        shape = RoundedCornerShape(10.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                        )
+                    ) {
+                        Text(
+                            text = "Disconnect",
+                            fontSize = 16.sp,
+                            fontStyle = FontStyle.Normal,
+                            color = Color.Red
+                        )
+                    }
 
+                }
               //  }//when
 
             }
