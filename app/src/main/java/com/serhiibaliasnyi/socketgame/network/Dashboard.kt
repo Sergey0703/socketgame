@@ -53,8 +53,10 @@ fun Dashboard(socketViewModel: SocketViewModel) {
     var acceptingTheRequest by remember {
         mutableStateOf(false)
     }
-
-    var requestDeny  by remember {
+    var cancelMyRequest by remember {
+        mutableStateOf(false)
+    }
+    var cancelRequest  by remember {
         mutableStateOf(false)
     }
     var sentRequest  by remember {
@@ -92,19 +94,51 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         mutableStateOf(0)
     }
 
-    if(message.message=="Request" && message.extra.isNotEmpty() ) canAcceptRequest=true
-    if(requestAccepted) canAcceptRequest=false
+    if(message.message=="Request" && message.extra.isNotEmpty() ){
+        canAcceptRequest=true
+        socketid=message.extra
+        Log.d("SocketManager", "canAcceptRequest=true")
+    }
+    if((message.message=="CancelRequest" && message.extra.isNotEmpty()) || cancelMyRequest){
+        disconnectComand=false
+        cancelRequest=false
+        cancelMyRequest=false
+        requestAccepted=false
+        acceptingTheRequest=false
+        canAcceptRequest=false
+        sentRequest=false
+        socketid=""
+        buttonSendRequest=true
+        buttonCancelRequest=false
+        buttonAcceptRequest=false
+        buttonCancelAcceptRequest=false
+        buttonDisconnect=false
+        Log.d("SocketManager", "cancelMyRequest")
+    }
+    if(requestAccepted){
+        canAcceptRequest=false
+        Log.d("SocketManager", "canAcceptRequest=false")
+    }
     if(message.message=="AcceptingTheRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
         acceptingTheRequest=true
         socketid=message.extra
         //    gameState=1
         Log.d("SocketManager", "AcceptingTheRequest")
     }
-    if(message.message=="DenyRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
-        // sendRequest=false
+    if((message.message=="DenyRequest" && message.extra.isNotEmpty()) ||(cancelRequest) ){ //&& !disconnectComand
+        disconnectComand=false
+        cancelRequest=false
+        cancelMyRequest=false
         requestAccepted=false
+        acceptingTheRequest=false
         canAcceptRequest=false
-        socketid=message.extra
+        sentRequest=false
+        socketid=""
+        buttonSendRequest=true
+        buttonCancelRequest=false
+        buttonAcceptRequest=false
+        buttonCancelAcceptRequest=false
+        buttonDisconnect=false
         //  gameState=0
         Log.d("SocketManager", "DenyRequest="+gameState)
     }
@@ -112,16 +146,19 @@ fun Dashboard(socketViewModel: SocketViewModel) {
 
        if(isConnected && !sentRequest && !requestAccepted){
               buttonSendRequest=true
+           Log.d("SocketManager", "buttonSendRequest=true")
         }
         if(isConnected && sentRequest){
             buttonCancelRequest=true
+            Log.d("SocketManager", "isConnected && sentRequest")
         }
        if(isConnected && canAcceptRequest){
         buttonSendRequest=false
         buttonCancelRequest=false
         buttonAcceptRequest=true
         buttonCancelAcceptRequest=true
-
+        buttonDisconnect=false
+           Log.d("SocketManager", "isConnected && canAcceptRequest")
         }
 
        if((isConnected && requestAccepted)||(isConnected && acceptingTheRequest)){
@@ -130,10 +167,14 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         buttonAcceptRequest=false
         buttonCancelAcceptRequest=false
         buttonDisconnect=true
+           Log.d("SocketManager", "(isConnected && requestAccepted)||(isConnected && acceptingTheRequest)")
        }
     if((message.message=="Disconnect" && message.extra.isNotEmpty()) || disconnectComand ){
         disconnectComand=false
+        cancelRequest=false
+        cancelMyRequest=false
         requestAccepted=false
+        acceptingTheRequest=false
         canAcceptRequest=false
         sentRequest=false
         socketid=""
@@ -244,7 +285,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
                             enabled = sentRequest,
                             onClick = {
                                 // disconnectComand = false
-                               // sentRequest = true
+                                cancelMyRequest = true
                                 socketViewModel.sendMessage("CancelRequest", "")
                                 socketViewModel.clearMessage()
                                 Log.d("SocketManager", "Cancel Request")
@@ -293,8 +334,8 @@ fun Dashboard(socketViewModel: SocketViewModel) {
                         // enabled = !sentRequest,
                         onClick = {
                             // disconnectComand = false
-                            //sentRequest = true
-                            socketViewModel.sendMessage("DenyRequest", "")
+                            cancelRequest = true
+                            socketViewModel.sendMessage("DenyRequest", socketid)
                             socketViewModel.clearMessage()
                             Log.d("SocketManager", "Deny Accept Request")
                         },
