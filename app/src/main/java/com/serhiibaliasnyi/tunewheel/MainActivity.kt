@@ -1,25 +1,18 @@
-package com.serhiibaliasnyi.socketgame
+package com.serhiibaliasnyi.tunewheel
 
 import android.media.SoundPool
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import com.serhiibaliasnyi.socketgame.rule_screen.RuleScreen
-import com.serhiibaliasnyi.socketgame.screens.MainScreen
-import com.serhiibaliasnyi.socketgame.ui.theme.GreenMain
-import com.serhiibaliasnyi.socketgame.ui.theme.SocketgameTheme
+import com.serhiibaliasnyi.tunewheel.rule_screen.RuleScreen
+import com.serhiibaliasnyi.tunewheel.ui.theme.GreenMain
+import com.serhiibaliasnyi.tunewheel.ui.theme.SocketgameTheme
 import io.socket.emitter.Emitter
 import org.json.JSONObject
 

@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.rule_screen
+package com.serhiibaliasnyi.tunewheel.network
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -6,15 +6,20 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.serhiibaliasnyi.socketgame.network.SocketViewModel
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.serhiibaliasnyi.tunewheel.data.ConnectionState
 
 @Composable
-fun SocketManager( socketViewModel: SocketViewModel = viewModel()) {
+fun ConnectionStatus(viewModel: SocketViewModel): ConnectionState {
+    val isConnected by viewModel.isConnected.collectAsState()
+    val connectionError by viewModel.connectionError.collectAsState()
     val infiniteTransition = rememberInfiniteTransition()
     val lightFlashing by infiniteTransition.animateFloat(
         initialValue = 0.0f,
@@ -35,17 +40,24 @@ fun SocketManager( socketViewModel: SocketViewModel = viewModel()) {
         )
     )
 
-    val isConnected by socketViewModel.isConnected.collectAsState()
-    val connectionError by socketViewModel.connectionError.collectAsState()
-    val response by socketViewModel.response.collectAsState()
-    val parsedMessage by socketViewModel.message.collectAsState()
-    val message by socketViewModel.message.collectAsState()
-    //  var message by viewModel.message.collectAsState()
-    // var message by remember { mutableStateOf("") }
-
-    LaunchedEffect(key1 = Unit) {
-        socketViewModel.connect()
+    when {
+        connectionError != null -> {
+           // Text("Server connection error: $connectionError")
+        }
+        !isConnected -> {
+          //  Text("Server is not active. Please try again later.")
+        }
+        else -> {
+         //   Text("Connected to server")
+        }
     }
 
+    var color: Color = if(isConnected) Color.Green else Color.Red
+    Canvas(modifier = Modifier
+        .size(10.dp),
+        onDraw = {
+            drawCircle(color = color.copy(alpha = lightFlashing))
+        })
 
+    return ConnectionState(isConnected, connectionError)
 }

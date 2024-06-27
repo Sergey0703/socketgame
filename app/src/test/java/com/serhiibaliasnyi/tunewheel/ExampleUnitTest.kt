@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame
+package com.serhiibaliasnyi.tunewheel
 
 import org.junit.Test
 

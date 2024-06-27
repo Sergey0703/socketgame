@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.screens
+package com.serhiibaliasnyi.tunewheel.screens
 
 import android.media.SoundPool
 import android.util.Log
@@ -43,11 +43,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 //import com.serhiibaliasnyi.socketgame.SocketHandler
-import com.serhiibaliasnyi.socketgame.network.SocketViewModel
+import com.serhiibaliasnyi.tunewheel.network.SocketViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.size
 import androidx.media3.exoplayer.ExoPlayer
-import com.serhiibaliasnyi.socketgame.MainActivity
+import com.serhiibaliasnyi.tunewheel.MainActivity
 
 @Composable
 fun MainScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>, socketViewModel: SocketViewModel = viewModel()) {

@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.rule_screen
+package com.serhiibaliasnyi.tunewheel.rule_screen
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -23,10 +23,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.serhiibaliasnyi.socketgame.ui.theme.GreenMain
-import com.serhiibaliasnyi.socketgame.ui.theme.MainActionColor
-import com.serhiibaliasnyi.socketgame.ui.theme.Purple40
-import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
+import com.serhiibaliasnyi.tunewheel.ui.theme.GreenMain
+import com.serhiibaliasnyi.tunewheel.ui.theme.MainActionColor
+import com.serhiibaliasnyi.tunewheel.ui.theme.Purple40
+import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 
 
 @Composable

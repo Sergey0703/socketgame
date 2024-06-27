@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.serhiibaliasnyi.socketgame"
+    namespace = "com.serhiibaliasnyi.tunewheel"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.serhiibaliasnyi.socketgame"
+        applicationId = "com.serhiibaliasnyi.tunewheel"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

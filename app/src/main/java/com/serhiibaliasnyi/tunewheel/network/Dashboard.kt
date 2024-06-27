@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.network
+package com.serhiibaliasnyi.tunewheel.network
 
 import android.util.Log
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -8,7 +8,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,8 +33,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.serhiibaliasnyi.socketgame.ui.theme.Red
-import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
+import com.serhiibaliasnyi.tunewheel.ui.theme.Red
+import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 
 @Composable
 fun Dashboard(socketViewModel: SocketViewModel) {

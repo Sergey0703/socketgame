@@ -1,8 +1,8 @@
-package com.serhiibaliasnyi.socketgame.network
+package com.serhiibaliasnyi.tunewheel.network
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.serhiibaliasnyi.socketgame.data.ParsedMessage
+import com.serhiibaliasnyi.tunewheel.data.ParsedMessage
 import io.socket.emitter.Emitter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

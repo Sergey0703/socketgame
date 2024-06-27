@@ -1,12 +1,10 @@
-package com.serhiibaliasnyi.socketgame.rule_screen
+package com.serhiibaliasnyi.tunewheel.rule_screen
 
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +19,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.White
@@ -29,11 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.serhiibaliasnyi.socketgame.MainActivity
-import com.serhiibaliasnyi.socketgame.ui.theme.GreenMain
-import com.serhiibaliasnyi.socketgame.ui.theme.MainActionColor
-import com.serhiibaliasnyi.socketgame.ui.theme.Purple40
-import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
+import com.serhiibaliasnyi.tunewheel.MainActivity
+import com.serhiibaliasnyi.tunewheel.ui.theme.GreenMain
+import com.serhiibaliasnyi.tunewheel.ui.theme.MainActionColor
+import com.serhiibaliasnyi.tunewheel.ui.theme.Purple40
+import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 
 
 @Composable

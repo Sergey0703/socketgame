@@ -1,6 +1,5 @@
-package com.serhiibaliasnyi.socketgame.ui.theme
+package com.serhiibaliasnyi.tunewheel.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

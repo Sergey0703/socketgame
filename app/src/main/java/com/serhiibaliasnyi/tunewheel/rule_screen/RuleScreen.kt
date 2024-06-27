@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.rule_screen
+package com.serhiibaliasnyi.tunewheel.rule_screen
 
 import android.graphics.BitmapFactory
 import android.media.SoundPool
@@ -17,7 +17,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,7 +57,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.ColorFilter
@@ -82,15 +80,14 @@ import androidx.media3.exoplayer.ExoPlayer
 //import com.airbnb.lottie.LottieComposition
 //import com.airbnb.lottie.compose.LottieAnimation
 //import com.airbnb.lottie.compose.LottieClipSpec
-import com.serhiibaliasnyi.socketgame.MainActivity
-import com.serhiibaliasnyi.socketgame.R
-import com.serhiibaliasnyi.socketgame.network.SocketViewModel
-import com.serhiibaliasnyi.socketgame.network.ConnectionStatus
-import com.serhiibaliasnyi.socketgame.network.Dashboard
+import com.serhiibaliasnyi.tunewheel.MainActivity
+import com.serhiibaliasnyi.tunewheel.R
+import com.serhiibaliasnyi.tunewheel.network.SocketViewModel
+import com.serhiibaliasnyi.tunewheel.network.Dashboard
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBackground
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBg
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenMain
-import com.serhiibaliasnyi.socketgame.ui.theme.irishGroverFontFamily
+import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Collections

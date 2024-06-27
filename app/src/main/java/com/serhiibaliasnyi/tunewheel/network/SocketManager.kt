@@ -1,4 +1,4 @@
-package com.serhiibaliasnyi.socketgame.network
+package com.serhiibaliasnyi.tunewheel.network
 
 import android.util.Log
 import io.socket.client.IO
