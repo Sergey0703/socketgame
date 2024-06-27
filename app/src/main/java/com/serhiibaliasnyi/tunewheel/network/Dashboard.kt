@@ -96,9 +96,13 @@ fun Dashboard(socketViewModel: SocketViewModel) {
     if(message.message=="Request" && message.extra.isNotEmpty() ){
         canAcceptRequest=true
         socketid=message.extra
-        Log.d("SocketManager", "canAcceptRequest=true")
+      //  Log.d("SocketManager", "canAcceptRequest=true")
     }
-    if((message.message=="CancelRequest" && message.extra.isNotEmpty()) || cancelMyRequest){
+   // Log.d("SocketManager", "message="+message.message+" extra="+message.extra)
+    if(message.message=="CancelRequest"){
+        Log.d("SocketManager", "===========================================")
+        }
+    if((message.message=="CancelRequest" )  || cancelMyRequest){
         disconnectComand=false
         cancelRequest=false
         cancelMyRequest=false
@@ -112,7 +116,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         buttonAcceptRequest=false
         buttonCancelAcceptRequest=false
         buttonDisconnect=false
-        Log.d("SocketManager", "cancelMyRequest")
+        Log.d("SocketManager", "cancelMyRequest=---------------------------------------")
     }
     if(requestAccepted){
         canAcceptRequest=false
@@ -145,7 +149,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
 
        if(isConnected && !sentRequest && !requestAccepted){
               buttonSendRequest=true
-           Log.d("SocketManager", "buttonSendRequest=true")
+       //    Log.d("SocketManager", "buttonSendRequest=true")
         }
         if(isConnected && sentRequest){
             buttonCancelRequest=true
@@ -157,7 +161,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         buttonAcceptRequest=true
         buttonCancelAcceptRequest=true
         buttonDisconnect=false
-           Log.d("SocketManager", "isConnected && canAcceptRequest")
+       //    Log.d("SocketManager", "isConnected && canAcceptRequest")
         }
 
        if((isConnected && requestAccepted)||(isConnected && acceptingTheRequest)){
@@ -285,9 +289,9 @@ fun Dashboard(socketViewModel: SocketViewModel) {
                             onClick = {
                                 // disconnectComand = false
                                 cancelMyRequest = true
-                                socketViewModel.sendMessage("CancelRequest", "")
+                                socketViewModel.sendMessage("CancelRequest", socketid)
                                 socketViewModel.clearMessage()
-                                Log.d("SocketManager", "Cancel Request")
+                                Log.d("SocketManager", "Cancel Request, socket="+socketid)
                             },
                             shape = RoundedCornerShape(10.dp),
                             elevation = ButtonDefaults.elevatedButtonElevation(5.dp),
