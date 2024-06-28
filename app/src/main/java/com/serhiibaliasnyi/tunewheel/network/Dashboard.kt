@@ -152,6 +152,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
        //    Log.d("SocketManager", "buttonSendRequest=true")
         }
         if(isConnected && sentRequest){
+            buttonSendRequest=false
             buttonCancelRequest=true
             Log.d("SocketManager", "isConnected && sentRequest")
         }
@@ -261,7 +262,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
                     //isConnected && !canAcceptRequest ->{
                    if(buttonSendRequest ){
                         Button(modifier = Modifier.padding(0.dp),
-                            enabled = !sentRequest,
+                           // enabled = !sentRequest,
                             onClick = {
                                 // disconnectComand = false
                                 sentRequest = true
