@@ -20,6 +20,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,9 +39,9 @@ import com.serhiibaliasnyi.tunewheel.ui.theme.Red
 import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 
 @Composable
-fun Dashboard(socketViewModel: SocketViewModel) {
+fun Dashboard(isConnected:Boolean ,socketViewModel: SocketViewModel): MutableState<Int> {
 
-    val isConnected by socketViewModel.isConnected.collectAsState()
+   // val isConnected by socketViewModel.isConnected.collectAsState()
     val connectionError by socketViewModel.connectionError.collectAsState()
     val response by socketViewModel.response.collectAsState()
     val parsedMessage by socketViewModel.message.collectAsState()
@@ -103,6 +105,7 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         Log.d("SocketManager", "===========================================")
         }
     if((message.message=="CancelRequest" )  || cancelMyRequest){
+        gameState=0
         disconnectComand=false
         cancelRequest=false
         cancelMyRequest=false
@@ -120,15 +123,17 @@ fun Dashboard(socketViewModel: SocketViewModel) {
     }
     if(requestAccepted){
         canAcceptRequest=false
+
         Log.d("SocketManager", "canAcceptRequest=false")
     }
     if(message.message=="AcceptingTheRequest" && message.extra.isNotEmpty() ){ //&& !disconnectComand
         acceptingTheRequest=true
         socketid=message.extra
-        //    gameState=1
+
         Log.d("SocketManager", "AcceptingTheRequest")
     }
     if((message.message=="DenyRequest" && message.extra.isNotEmpty()) ||(cancelRequest) ){ //&& !disconnectComand
+        gameState=0
         disconnectComand=false
         cancelRequest=false
         cancelMyRequest=false
@@ -172,8 +177,11 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         buttonCancelAcceptRequest=false
         buttonDisconnect=true
            Log.d("SocketManager", "(isConnected && requestAccepted)||(isConnected && acceptingTheRequest)")
+           if(isConnected && requestAccepted) gameState=2
+           if(isConnected && acceptingTheRequest) gameState=1
        }
     if((message.message=="Disconnect" && message.extra.isNotEmpty()) || disconnectComand ){
+        gameState=0
         disconnectComand=false
         cancelRequest=false
         cancelMyRequest=false
@@ -218,6 +226,15 @@ fun Dashboard(socketViewModel: SocketViewModel) {
        // .background(color=Red)
         .padding(0.dp)
         .fillMaxSize()) {
+        Text( text="$gameState",
+            modifier = Modifier
+            .padding(0.dp),
+            textAlign = TextAlign.Left,
+            fontFamily = irishGroverFontFamily,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = White,
+        )
         Canvas(modifier = Modifier
             .size(10.dp),
             onDraw = {
@@ -387,4 +404,5 @@ fun Dashboard(socketViewModel: SocketViewModel) {
         }
 
     }
+    return remember { mutableStateOf(gameState) }
 }

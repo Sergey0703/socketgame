@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 const val DEBOUNCE_INTERVAL_MS = 1000L
 @Composable
 fun DebouncedButton(onClick: () -> Unit, enabled: Boolean = true, text: String) {

@@ -41,6 +41,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -100,7 +101,8 @@ import kotlin.time.Duration.Companion.seconds
 )
 @Composable
 fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>,socketViewModel: SocketViewModel = viewModel()) {
-   // val isConnected by socketViewModel.isConnected.collectAsState()
+    val isConnected by socketViewModel.isConnected.collectAsState()
+    val message by socketViewModel.message.collectAsState()
    // val connectionError by socketViewModel.connectionError.collectAsState()
    // val response by socketViewModel.response.collectAsState()
    // val parsedMessage by socketViewModel.message.collectAsState()
@@ -154,7 +156,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     )
 */
     val imageVisible = remember { mutableStateListOf(false, false, false, false) }
-    val borderColour =remember {mutableStateListOf(0, 0, 0)}
+    //val borderColour =remember {mutableStateListOf(0, 0, 0)}
 
     //var currentProgress by remember { mutableStateOf(0f) }
     //var loading by remember { mutableStateOf(false) }
@@ -190,6 +192,9 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     var winCount = remember{
         mutableStateOf(0)
     }
+    var gameStateScreen = remember{
+        mutableStateOf(0)
+    }
 
     var totalWinCount = remember{
         mutableStateOf(0)
@@ -216,6 +221,8 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     val numberOfTrack = remember {
         mutableStateOf(-1)
     }
+
+
 
    // val playingSongIndex = remember {
    //     mutableIntStateOf(0)
@@ -329,7 +336,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         finishedListener = {
              number=((360f-(it%360))/(360f/quantityOfSectors)).toInt()+1
              if(number>quantityOfSectors) number=quantityOfSectors
-             Log.d("rul","Before song="+ playListShuffle.toList().toString())
+             Log.d("rul2","rotationValue="+rotationValue+" it="+ it+ " number="+number+" Before song="+ playListShuffle.toList().toString())
 
              var song:MainActivity.Music=playListShuffle.get(number-1)
              songId=song.id
@@ -338,7 +345,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
              getUtilSongs( song, playList).forEach {
                  listUtilSongs.add(it)
              }
-                Log.d("rul","Song="+ song.name)
+                Log.d("rul2","Song="+ song.name)
             /*   loading = true
             scope.launch {
                 loadProgress {loading,  progress ->
@@ -355,6 +362,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 player.seekTo(number-1, C.TIME_UNSET);
                 player.setPlayWhenReady(true);
                 player.play()
+                Log.d("rul2","Song=2"+ song.name)
             }
 
         }
@@ -374,22 +382,61 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         )
     )
 
- /*   var isHeartBeating by remember { mutableStateOf(true) }
-    val heartScale:Float by animateFloatAsState(
-        animationSpec = tween(
-            durationMillis = 4000,
-            easing = LinearOutSlowInEasing
-        ),
-
-      //  targetValue = if (isHeartBeating) 1.2f else 1f,
-        targetValue =  1.2f,
-                finishedListener = {
-                    visibleWinImage=0f
-                    isHeartBeating=false
-                    Log.d("rul","heartScaleStop")
+    if(message.message=="Spin"){
+        Log.d("SocketManager","SpinReceived="+message.extra)
+        if (winCount.value == quantityOfWinCount) {
+            visibleCount = 0f
+            winCount.value = 0
         }
-    )
-*/
+        sliderPosition.longValue=0
+        visibleCount = 1f
+        visibleWinImage = 0f
+        flashValue = 0f
+        winVisible = false
+        listUtilSongs.clear()
+
+        // for (x in 0..quantityOfButtons.value - 1) {
+        for (x in 0..3) {
+            imageVisible.set(x, false)
+        }
+        //  for (x in 0..quantityOfButtons.value - 1) {
+        //      borderColour.set(x, 0)
+        //  }
+        // alphaCoin1 = 0f
+        //  buttonTextStart = ""
+        //  alphaStartButton = alphaDisabled
+        isButtonsEnabled = false
+        //555   alphaButtons = alphaDisabled
+        //555    alphaRulette = 1f
+        isButtonStartEnabled = false
+        songId = -1
+
+        initSongs(playListShuffle, quantityOfSectors, playList, player)
+        //Log.d("rul","playListShuffleButton="+playListShuffle)
+        //  isPlayingLottie = false
+        rotationValue=message.extra.toFloat()
+        //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
+        sound?.play(1, 1F, 1F, 0, 0, 1F)
+
+    }
+
+
+    /*   var isHeartBeating by remember { mutableStateOf(true) }
+       val heartScale:Float by animateFloatAsState(
+           animationSpec = tween(
+               durationMillis = 4000,
+               easing = LinearOutSlowInEasing
+           ),
+
+         //  targetValue = if (isHeartBeating) 1.2f else 1f,
+           targetValue =  1.2f,
+                   finishedListener = {
+                       visibleWinImage=0f
+                       isHeartBeating=false
+                       Log.d("rul","heartScaleStop")
+           }
+       )
+   */
     if(winCount.value==quantityOfWinCount){
         winCount.value=0
         winVisible=true
@@ -440,7 +487,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
-                 Dashboard(socketViewModel = socketViewModel)
+                gameStateScreen=Dashboard(isConnected, socketViewModel = socketViewModel)
          /*       val connectionState = ConnectionStatus(viewModel = socketViewModel)
             Text( modifier=Modifier
                 //.background(Yellow)
@@ -580,9 +627,11 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                                 initSongs(playListShuffle, quantityOfSectors, playList, player)
                                 //Log.d("rul","playListShuffleButton="+playListShuffle)
                                 //  isPlayingLottie = false
-                                rotationValue = ((0..360)
+                                val rotationValue0 = ((0..360)
                                     .random()
                                     .toFloat() + 720) + angle
+                                socketViewModel.sendMessage("Spin", rotationValue0.toString())
+                                socketViewModel.clearMessage()
                                 //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
                                 sound?.play(1, 1F, 1F, 0, 0, 1F)
 
@@ -1051,7 +1100,7 @@ fun initSongs(playListShuffle:MutableList<MainActivity.Music>,quantytyOfSectors:
     //playList.forEach {
     player.clearMediaItems()
     playListShuffle.forEach {
-        val path = "android.resource://" + "com.serhiibaliasnyi.luckywheel" + "/" + it.music
+        val path = "android.resource://" + "com.serhiibaliasnyi.tunewheel" + "/" + it.music
         val mediaItem = MediaItem.fromUri(Uri.parse(path))
         player.addMediaItem(mediaItem)
         //list.add(it.name)
