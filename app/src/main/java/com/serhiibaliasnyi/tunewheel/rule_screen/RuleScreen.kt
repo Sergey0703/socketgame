@@ -85,6 +85,7 @@ import com.serhiibaliasnyi.tunewheel.MainActivity
 import com.serhiibaliasnyi.tunewheel.R
 import com.serhiibaliasnyi.tunewheel.network.SocketViewModel
 import com.serhiibaliasnyi.tunewheel.network.Dashboard
+import com.serhiibaliasnyi.tunewheel.network.SocketManager.connectionError
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBackground
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenBg
 //import com.serhiibaliasnyi.luckywheel.ui.theme.GreenMain
@@ -101,8 +102,10 @@ import kotlin.time.Duration.Companion.seconds
 )
 @Composable
 fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>,socketViewModel: SocketViewModel = viewModel()) {
-    val isConnected by socketViewModel.isConnected.collectAsState()
-    val message by socketViewModel.message.collectAsState()
+   // val isConnected by socketViewModel.isConnected.collectAsState()
+  //  var isConnected by remember { mutableStateOf(false) }
+  //  var connectionError by remember { mutableStateOf<String?>(null) }
+  //  val message by socketViewModel.message.collectAsState()
    // val connectionError by socketViewModel.connectionError.collectAsState()
    // val response by socketViewModel.response.collectAsState()
    // val parsedMessage by socketViewModel.message.collectAsState()
@@ -110,9 +113,14 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     //  var message by viewModel.message.collectAsState()
     // var message by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = Unit) {
+  /*  LaunchedEffect(key1 = Unit) {
         socketViewModel.connect()
-    }
+        while (true) {
+            isConnected = socketViewModel.isConnected.value
+            connectionError = socketViewModel.connectionError.value
+            delay(5000) // 5 seconds delay between checks
+        }
+    } */
 
 
     val quantityOfSectors:Int=40
@@ -382,7 +390,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         )
     )
 
-    if(message.message=="Spin"){
+  /*  if(message.message=="Spin"){
         Log.d("SocketManager","SpinReceived="+message.extra)
         if (winCount.value == quantityOfWinCount) {
             visibleCount = 0f
@@ -418,7 +426,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
         sound?.play(1, 1F, 1F, 0, 0, 1F)
 
-    }
+    } */
 
 
     /*   var isHeartBeating by remember { mutableStateOf(true) }
@@ -487,7 +495,8 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
-                gameStateScreen=Dashboard(isConnected, socketViewModel = socketViewModel)
+          //      gameStateScreen=Dashboard(isConnected, connectionError, socketViewModel = socketViewModel)
+                gameStateScreen=Dashboard(socketViewModel = socketViewModel)
          /*       val connectionState = ConnectionStatus(viewModel = socketViewModel)
             Text( modifier=Modifier
                 //.background(Yellow)
@@ -627,11 +636,17 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                                 initSongs(playListShuffle, quantityOfSectors, playList, player)
                                 //Log.d("rul","playListShuffleButton="+playListShuffle)
                                 //  isPlayingLottie = false
-                                val rotationValue0 = ((0..360)
-                                    .random()
-                                    .toFloat() + 720) + angle
-                                socketViewModel.sendMessage("Spin", rotationValue0.toString())
-                                socketViewModel.clearMessage()
+                                if(gameStateScreen.value==1) {
+                                    val rotationValue0 = ((0..360)
+                                        .random()
+                                        .toFloat() + 720) + angle
+                                    socketViewModel.sendMessage("Spin", rotationValue0.toString())
+                                    socketViewModel.clearMessage()
+                                }else if(gameStateScreen.value==0){
+                                    rotationValue = ((0..360)
+                                        .random()
+                                        .toFloat() + 720) + angle
+                                }
                                 //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
                                 sound?.play(1, 1F, 1F, 0, 0, 1F)
 

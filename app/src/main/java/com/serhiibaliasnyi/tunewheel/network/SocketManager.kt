@@ -8,18 +8,10 @@ import java.net.URISyntaxException
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.json.JSONObject
 
-/*
-import android.util.Log
-import io.socket.client.IO
-import io.socket.client.Socket
-import io.socket.emitter.Emitter
-import kotlinx.coroutines.flow.MutableStateFlow
-import org.json.JSONObject
-import java.net.URISyntaxException
-*/
 
 object SocketManager {
-    private const val SERVER_URL = "http://10.0.2.2:3000" // Change to your server URL
+   // private const val SERVER_URL = "http://10.0.2.2:3000" // Change to your server URL
+   private const val SERVER_URL = "https://socketgameserver-production.up.railway.app/" // Change to your server URL
     private var socket: Socket? = null
 
     val isConnected = MutableStateFlow(false)

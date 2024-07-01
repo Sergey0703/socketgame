@@ -39,9 +39,10 @@ import com.serhiibaliasnyi.tunewheel.ui.theme.Red
 import com.serhiibaliasnyi.tunewheel.ui.theme.irishGroverFontFamily
 
 @Composable
-fun Dashboard(isConnected:Boolean ,socketViewModel: SocketViewModel): MutableState<Int> {
+//fun Dashboard(isConnected:Boolean ,connectionError: String?, socketViewModel: SocketViewModel): MutableState<Int> {
+fun Dashboard(socketViewModel: SocketViewModel): MutableState<Int> {
 
-   // val isConnected by socketViewModel.isConnected.collectAsState()
+    val isConnected by socketViewModel.isConnected.collectAsState()
     val connectionError by socketViewModel.connectionError.collectAsState()
     val response by socketViewModel.response.collectAsState()
     val parsedMessage by socketViewModel.message.collectAsState()
