@@ -103,24 +103,27 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity.Music>,socketViewModel: SocketViewModel = viewModel()) {
    // val isConnected by socketViewModel.isConnected.collectAsState()
-  //  var isConnected by remember { mutableStateOf(false) }
-  //  var connectionError by remember { mutableStateOf<String?>(null) }
+    var isConnected by remember { mutableStateOf(false) }
+    var connectionError by remember { mutableStateOf<String?>(null) }
   //  val message by socketViewModel.message.collectAsState()
    // val connectionError by socketViewModel.connectionError.collectAsState()
    // val response by socketViewModel.response.collectAsState()
    // val parsedMessage by socketViewModel.message.collectAsState()
-   // val message by socketViewModel.message.collectAsState()
+    val message by socketViewModel.message.collectAsState()
     //  var message by viewModel.message.collectAsState()
-    // var message by remember { mutableStateOf("") }
+   //  var message by remember { mutableStateOf("") }
 
-  /*  LaunchedEffect(key1 = Unit) {
+    var gameState by remember {
+        mutableStateOf(0)
+    }
+    LaunchedEffect(key1 = Unit) {
         socketViewModel.connect()
         while (true) {
             isConnected = socketViewModel.isConnected.value
             connectionError = socketViewModel.connectionError.value
-            delay(5000) // 5 seconds delay between checks
+            delay(1000) // 5 seconds delay between checks
         }
-    } */
+    }
 
 
     val quantityOfSectors:Int=40
@@ -200,9 +203,9 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     var winCount = remember{
         mutableStateOf(0)
     }
-    var gameStateScreen = remember{
-        mutableStateOf(0)
-    }
+   // val gameStateScreen = remember{
+   //     mutableStateOf(0)
+   // }
 
     var totalWinCount = remember{
         mutableStateOf(0)
@@ -390,8 +393,8 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         )
     )
 
-  /*  if(message.message=="Spin"){
-        Log.d("SocketManager","SpinReceived="+message.extra)
+    if(message.message=="Spin"){
+
         if (winCount.value == quantityOfWinCount) {
             visibleCount = 0f
             winCount.value = 0
@@ -423,10 +426,12 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         //Log.d("rul","playListShuffleButton="+playListShuffle)
         //  isPlayingLottie = false
         rotationValue=message.extra.toFloat()
+        socketViewModel.clearMessage()
+        Log.d("spin","SpinReceived="+message.extra+" rotationValue="+rotationValue)
         //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
         sound?.play(1, 1F, 1F, 0, 0, 1F)
 
-    } */
+    }
 
 
     /*   var isHeartBeating by remember { mutableStateOf(true) }
@@ -495,8 +500,10 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Start) {
-          //      gameStateScreen=Dashboard(isConnected, connectionError, socketViewModel = socketViewModel)
-                gameStateScreen=Dashboard(socketViewModel = socketViewModel)
+                Dashboard(isConnected, connectionError, gameState = gameState,
+                    onGameStateChange = { newState -> gameState = newState }, socketViewModel)
+               // gameStateScreen.value = updatedGameStateScreen.value
+              //  gameStateScreen=Dashboard(socketViewModel = socketViewModel)
          /*       val connectionState = ConnectionStatus(viewModel = socketViewModel)
             Text( modifier=Modifier
                 //.background(Yellow)
@@ -575,7 +582,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                         // horizontalArrangement = Arrangement.spacedBy(-30.dp)
                         verticalArrangement = Arrangement.Top
                     ) {
-
+                         Text(text="8- ${gameState}",color = White  )
                         for (x in 1..winCount.value) {
                             Image(
 
@@ -636,20 +643,20 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                                 initSongs(playListShuffle, quantityOfSectors, playList, player)
                                 //Log.d("rul","playListShuffleButton="+playListShuffle)
                                 //  isPlayingLottie = false
-                                if(gameStateScreen.value==1) {
+                                if(gameState==1) {
                                     val rotationValue0 = ((0..360)
                                         .random()
                                         .toFloat() + 720) + angle
                                     socketViewModel.sendMessage("Spin", rotationValue0.toString())
                                     socketViewModel.clearMessage()
-                                }else if(gameStateScreen.value==0){
+                                }else if(gameState==0) {
                                     rotationValue = ((0..360)
                                         .random()
                                         .toFloat() + 720) + angle
-                                }
-                                //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
-                                sound?.play(1, 1F, 1F, 0, 0, 1F)
 
+                                    //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
+                                    sound?.play(1, 1F, 1F, 0, 0, 1F)
+                                }
                             }
                     ) {
 
