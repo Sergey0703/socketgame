@@ -345,7 +345,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
             easing = LinearOutSlowInEasing
         ),
         finishedListener = {
-             number=((360f-(it%360))/(360f/quantityOfSectors)).toInt()+1
+        /*     number=((360f-(it%360))/(360f/quantityOfSectors)).toInt()+1
              if(number>quantityOfSectors) number=quantityOfSectors
              Log.d("rul2","rotationValue="+rotationValue+" it="+ it+ " number="+number+" Before song="+ playListShuffle.toList().toString())
 
@@ -357,6 +357,8 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                  listUtilSongs.add(it)
              }
                 Log.d("rul2","Song="+ song.name)
+                */
+
             /*   loading = true
             scope.launch {
                 loadProgress {loading,  progress ->
@@ -373,7 +375,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 player.seekTo(number-1, C.TIME_UNSET);
                 player.setPlayWhenReady(true);
                 player.play()
-                Log.d("rul2","Song=2"+ song.name)
+              //  Log.d("rul2","Song=2"+ song.name)
             }
 
         }
@@ -422,10 +424,13 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         isButtonStartEnabled = false
         songId = -1
 
-        initSongs(playListShuffle, quantityOfSectors, playList, player)
+      //999  initSongs(playListShuffle, quantityOfSectors, playList, player)
         //Log.d("rul","playListShuffleButton="+playListShuffle)
         //  isPlayingLottie = false
-        rotationValue=message.extra.toFloat()
+        val inputStr=message.extra
+        val inputNumbers = remember { inputStr.split(",").map { it.toFloat() }.toTypedArray() }
+        rotationValue=inputNumbers[0]
+        number=inputNumbers[1].toInt()
         socketViewModel.clearMessage()
         Log.d("spin","SpinReceived="+message.extra+" rotationValue="+rotationValue)
         //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
@@ -640,14 +645,28 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                                 isButtonStartEnabled = false
                                 songId = -1
 
-                                initSongs(playListShuffle, quantityOfSectors, playList, player)
+                               // initSongs(playListShuffle, quantityOfSectors, playList, player)
                                 //Log.d("rul","playListShuffleButton="+playListShuffle)
                                 //  isPlayingLottie = false
                                 if(gameState==1) {
                                     val rotationValue0 = ((0..360)
                                         .random()
                                         .toFloat() + 720) + angle
-                                    socketViewModel.sendMessage("Spin", rotationValue0.toString())
+
+                                 /*   number=((360f-(rotationValue0%360))/(360f/quantityOfSectors)).toInt()+1
+                                    if(number>quantityOfSectors) number=quantityOfSectors
+                                    Log.d("rul2","rotationValue="+rotationValue+ " number="+number+" Before song="+ playListShuffle.toList().toString())
+                                    initSongs(playListShuffle, quantityOfSectors, playList, player)
+                                    var song:MainActivity.Music=playListShuffle.get(number-1)
+                                    songId=song.id
+                                    //  listUtilSongs=getUtilSongs(song, playList)
+                                    listUtilSongs.clear()
+                                    getUtilSongs( song, playList).forEach {
+                                        listUtilSongs.add(it)
+                                    } */
+                                    val randomString = generateRandomNumbersAsString(1, playList.size, 5, ", ")
+
+                                    socketViewModel.sendMessage("Spin", rotationValue0.toString()+","+randomString)
                                     socketViewModel.clearMessage()
                                 }else if(gameState==0) {
                                     rotationValue = ((0..360)
@@ -1037,6 +1056,26 @@ fun choiceSong(x: Int,songId:Int,volumeCoin:Float, sound: SoundPool?,
         }
     }
 } */
+fun generateRandomNumbersAsString(
+    start: Int,
+    end: Int,
+    count: Int,
+    separator: String = ","
+): String {
+    require(count <= (end - start + 1)) { "Count cannot be larger than the range size" }
+
+    val taken = mutableSetOf<Int>()
+    return buildString {
+        repeat(count) { i ->
+            if (i > 0) append(separator)
+            var number: Int
+            do {
+                number = (start..end).random()
+            } while (!taken.add(number))
+            append(number)
+        }
+    }
+}
 
 @Composable
 //fun AssetImage(trackName: MutableState<String>) {
