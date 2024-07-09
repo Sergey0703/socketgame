@@ -691,7 +691,16 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                                     rotationValue = ((0..360)
                                         .random()
                                         .toFloat() + 720) + angle
+                                    val randomString = generateRandomNumbersAsString(1, playList.size, 4, ",")
+                                    val inputNumbers =  randomString.split(",").map { it.toInt() }.toTypedArray()
 
+                                    number=inputNumbers[0]-1
+                                    songId=playList.get(number).id
+
+                                    listUtilSongs.clear()
+                                    listUtilSongs.add(playList.get(inputNumbers[1]-1))
+                                    listUtilSongs.add(playList.get(inputNumbers[2]-1))
+                                    listUtilSongs.add(playList.get(inputNumbers[3]-1))
                                     //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
                                     sound?.play(1, 1F, 1F, 0, 0, 1F)
                                 }
