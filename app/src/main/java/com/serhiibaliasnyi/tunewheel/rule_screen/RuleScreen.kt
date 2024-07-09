@@ -246,6 +246,13 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
     }
 
     LaunchedEffect(Unit) {
+        playList.forEach {
+            val path = "android.resource://" + "com.serhiibaliasnyi.tunewheel" + "/" + it.music
+            val mediaItem = MediaItem.fromUri(Uri.parse(path))
+            player.addMediaItem(mediaItem)
+
+        }
+        player.prepare()
       //   initSongs(playListShuffle,quantytyOfSectors,playList,player )
     /*
         playListShuffle.clear()
@@ -366,6 +373,9 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 }
 
            */
+
+            Log.d("spin","number="+ number)
+            var song:MainActivity.Music=playList.get(number)
             if (player.isPlaying) {
                 player.pause()
             } else {
@@ -375,6 +385,7 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
                 player.seekTo(number, C.TIME_UNSET);
                 player.setPlayWhenReady(true);
                 player.play()
+                Log.d("spin","number2="+ number+" song="+song.name)
               //  Log.d("rul2","Song=2"+ song.name)
             }
 
@@ -430,14 +441,17 @@ fun RuleScreen(sound: SoundPool?, player: ExoPlayer, playList: List<MainActivity
         val inputStr=message.extra
         val inputNumbers = remember { inputStr.split(",").map { it.toFloat() }.toTypedArray() }
         rotationValue=inputNumbers[0]
-        number=inputNumbers[1].toInt()
+        number=inputNumbers[1].toInt()-1
+        songId=playList.get(number).id
+
         listUtilSongs.clear()
-        listUtilSongs.add(playList.get(inputNumbers[2].toInt()))
-        listUtilSongs.add(playList.get(inputNumbers[3].toInt()))
-        listUtilSongs.add(playList.get(inputNumbers[4].toInt()))
+        listUtilSongs.add(playList.get(inputNumbers[2].toInt()-1))
+        listUtilSongs.add(playList.get(inputNumbers[3].toInt()-1))
+        listUtilSongs.add(playList.get(inputNumbers[4].toInt()-1))
 //        listUtilSongs.add(playList.get(inputNumbers[5].toInt()))
-        socketViewModel.clearMessage()
+
         Log.d("spin","SpinReceived="+message.extra+" rotationValue="+rotationValue)
+        socketViewModel.clearMessage()
         //   Log.d("rul", "angle="+(angle%360).toString() +" rotationValue "+rotationValue.toString())
         sound?.play(1, 1F, 1F, 0, 0, 1F)
 
@@ -1061,7 +1075,34 @@ fun choiceSong(x: Int,songId:Int,volumeCoin:Float, sound: SoundPool?,
         }
     }
 } */
+
 fun generateRandomNumbersAsString(
+    start: Int,
+    end: Int,
+    count: Int,
+    separator: String = ","
+): String {
+    require(count > 0) { "Count must be positive" }
+    require(start <= end) { "Start must be less than or equal to end" }
+    require(count <= (end - start + 1)) { "Count cannot be larger than the range size" }
+
+    val numbers = (start..end).shuffled()
+    val result = numbers.take(count)
+
+    // Generate a new first number by randomly selecting from the first three numbers
+    val newFirstNumber = result.take(3).random()
+
+    // Construct the final string
+    return buildString {
+        append(newFirstNumber)
+        result.forEach {
+            append(separator)
+            append(it)
+        }
+    }
+}
+
+fun generateRandomNumbersAsString1(
     start: Int,
     end: Int,
     count: Int,
